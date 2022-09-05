@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/WhiteList.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.9;\n\nerror WhiteList__AlreadyWhitelisted();\nerror WhiteList__MaxNumberWhitelistedReached();\n\ncontract WhiteList {\n    // max number of whitelisted addresses allowed\n    uint8 public maxWhitelistedAddresses;\n\n    //Create a mapping of whitelistedAddresses\n    //if an address is whitelisted, we would set it to true, it is false by default for all other addresses\n    mapping(address => bool) public whitelistedAddresses;\n\n    //numAddressesWhitelisted would be used to keep track of how many addresses have been whitelisted\n    // NOTE: Don't change this variable name, as it will be part of verification\n    uint8 public numAddressesWhitelisted;\n\n    //Setting the max number of whitelisted addresses\n    //user will put the value at the time of deployment\n    constructor(uint8 _maxWhitelistedAddresses) {\n        maxWhitelistedAddresses = _maxWhitelistedAddresses;\n    }\n\n    /**\n     *  @dev - this function add the address of the sender to the whitelist\n     */\n    function addAddressToWhitelist() public {\n        //check if the user has already been whitelisted\n        if (whitelistedAddresses[msg.sender]) {\n            revert WhiteList__AlreadyWhitelisted();\n        }\n        //check if the numAddressesWhitelisted < maxWhitelistedAddresses, if not throw an error\n        if (numAddressesWhitelisted >= maxWhitelistedAddresses) {\n            revert WhiteList__MaxNumberWhitelistedReached();\n        }\n\n        //Add the address which called the function to the whitelistedAddress array\n        whitelistedAddresses[msg.sender] = true;\n        //Increase the number of whitelisted addresses\n        numAddressesWhitelisted += 1;\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
