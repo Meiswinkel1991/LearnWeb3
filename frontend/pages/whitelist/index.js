@@ -4,10 +4,35 @@ import { useWhitelistDapp } from "../../hooks/web3-hooks";
 import { useWeb3 } from "../../store/web3-context";
 
 import Button from "../../components/ui/Button";
+import ConnectionButton from "../../components/layout/ConnectionButton";
 
 const WhiteList = () => {
-  const { addAddressToWhitelist, joinedWhitelist } = useWhitelistDapp();
+  const { addAddressToWhitelist, joinedWhitelist, numberOfWhitelisted } =
+    useWhitelistDapp();
   const { isConnected } = useWeb3();
+
+  const renderButton = () => {
+    if (!isConnected) {
+      return (
+        <div>
+          <p className="text-white mb-4">
+            You are not connected with your wallet!!!
+          </p>
+          <ConnectionButton />
+        </div>
+      );
+    }
+
+    if (!joinedWhitelist) {
+      return <Button onClick={addAddressToWhitelist}>Join Whitelist</Button>;
+    }
+
+    if (joinedWhitelist) {
+      return (
+        <p className="text-white">You are already joined the Whitelist!!</p>
+      );
+    }
+  };
 
   return (
     <div className="w-full h-full shrink  flex justify-center items-center overflow-auto mt-8">
@@ -18,8 +43,12 @@ const WhiteList = () => {
         <p className="text-white text-lg font-semibold">
           Its an NFT collection for developers in Crypto.
         </p>
-        {joinedWhitelist ? <p>You are already joined the Whitelist</p> : ""}
-        <Button onClick={addAddressToWhitelist}>Join Whitelist</Button>
+        <div className="border-t-2  border-primary" />
+        <p className=" text-white  ">
+          <span className="text-primary text-xl">{numberOfWhitelisted} </span>
+          people have already joined the Whitelist
+        </p>
+        {renderButton()}
       </div>
     </div>
   );

@@ -62,10 +62,8 @@ export const useWhitelistDapp = () => {
   const checkIfAddressIsWhitelisted = async () => {
     try {
       const _contract = getContract();
-      console.log(address);
-      console.log(_contract);
+
       const _joinedWhitelist = await _contract.whitelistedAddresses(address);
-      console.log(_joinedWhitelist);
       setJoinedWhitelist(_joinedWhitelist);
     } catch (e) {
       console.error(e);
