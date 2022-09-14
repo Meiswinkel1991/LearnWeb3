@@ -38,10 +38,10 @@ const WhiteList = () => {
     <div className="h-full  flex justify-center items-center overflow-auto">
       <div className="mx-4 space-y-4 mb-16">
         <h1 className=" text-4xl font-bold text-white ">
-          Welcome to <span className="text-primary">MSW</span> Devs
+          Welcome to <span className="text-primary">MSW</span> Devs WhiteList
         </h1>
         <p className="text-white text-lg font-semibold">
-          Its an NFT collection for developers in Crypto.
+          Its a Whitelist for the NFT MSW!
         </p>
         <p className="text-white text-lg font-semibold">
           You can now whitelisting your address and can mint the brand new NFT
