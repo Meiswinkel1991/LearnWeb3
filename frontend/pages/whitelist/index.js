@@ -38,17 +38,22 @@ const WhiteList = () => {
     <div className="w-full h-full shrink  flex justify-center items-center overflow-auto mt-8">
       <div className="mx-4 space-y-4 mb-16">
         <h1 className=" text-4xl font-bold text-white ">
-          Welcome to <span className="text-primary">Crypto</span> Devs
+          Welcome to <span className="text-primary">MSW</span> Devs
         </h1>
         <p className="text-white text-lg font-semibold">
           Its an NFT collection for developers in Crypto.
         </p>
-        <div className="border-t-2  border-primary" />
-        <p className=" text-white  ">
-          <span className="text-primary text-xl">{numberOfWhitelisted} </span>
-          people have already joined the Whitelist
+        <p className="text-white text-lg font-semibold">
+          You can now whitelisting your address and can mint the brand new NFT
+          Tokens while Presale!!
         </p>
-        {renderButton()}
+        <div className="border-2 rounded-xl  border-primary w-1/2 p-4">
+          <p className=" text-white mb-2 text-semibold  ">
+            <span className="text-primary text-xl">{numberOfWhitelisted} </span>
+            people have already joined the Whitelist
+          </p>
+          {renderButton()}
+        </div>
       </div>
     </div>
   );

@@ -13,6 +13,10 @@ const navLinks = [
     path: "/whitelist",
     name: "WhiteList Dapp",
   },
+  {
+    path: "/nft",
+    name: "NFT Collection",
+  },
 ];
 
 const MainNavigation = () => {
