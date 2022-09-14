@@ -87,7 +87,19 @@ export const useNftCollection = () => {
     }
   };
 
-  const startPresale = () => {};
+  const startPresale = async () => {
+    try {
+      const _contract = getContract(true);
+
+      const tx = await _contract.startPresale();
+      setIsLoading(true);
+      await tx.wait();
+      setIsLoading(false);
+      await checkIfPresaleStarted();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   /** Fetching Contract Data Functions */
   const checkIfPresaleStarted = async () => {
@@ -102,7 +114,22 @@ export const useNftCollection = () => {
     }
   };
 
-  const checkIfPresaleEnded = async () => {};
+  const checkIfPresaleEnded = async () => {
+    try {
+      const _contract = getContract();
+
+      const _presaleEnded = await _contract.presaleEnded();
+
+      const hasEnded = _presaleEnded.lt(Math.floor(Date.now() / 1000));
+      if (hasEnded) {
+        setPresaleEnded(true);
+      } else {
+        setPresaleEnded(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const getTokenIdsMinted = async () => {
     try {
@@ -115,14 +142,35 @@ export const useNftCollection = () => {
     }
   };
 
+  const getOwner = async () => {
+    try {
+      const _contract = getContract();
+
+      const _owner = await _contract.owner();
+
+      if (_owner.toLowerCase() === address.toLowerCase()) {
+        setIsOwner(true);
+      } else {
+        setIsOwner(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     if (isConnected) {
+      getOwner();
       const _presaleStarted = checkIfPresaleStarted();
       if (_presaleStarted) {
         checkIfPresaleEnded();
       }
 
       getTokenIdsMinted();
+      //TODO: Set two intervals to fetch data from blockchain!!!!
+      // Set an interval which gets called every 5 seconds to check presale has ended
+
+      // set an interval to get the number of token Ids minted every 5 seconds
     }
   });
 
@@ -134,6 +182,7 @@ export const useNftCollection = () => {
     isLoading,
     publicMint,
     presaleMint,
+    startPresale,
   };
 };
 
