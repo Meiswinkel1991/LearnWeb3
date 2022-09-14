@@ -35,7 +35,7 @@ const WhiteList = () => {
   };
 
   return (
-    <div className="w-full h-full shrink  flex justify-center items-center overflow-auto mt-8">
+    <div className="h-full  flex justify-center items-center overflow-auto">
       <div className="mx-4 space-y-4 mb-16">
         <h1 className=" text-4xl font-bold text-white ">
           Welcome to <span className="text-primary">MSW</span> Devs
