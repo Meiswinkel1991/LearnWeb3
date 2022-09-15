@@ -1,7 +1,11 @@
-import { Contract, utils } from "ethers";
+import { BigNumber, Contract, utils } from "ethers";
 import { useEffect, useState } from "react";
 import { useWeb3 } from "../store/web3-context";
-import { whitelistData, nftCollectionData } from "../store/contract-data";
+import {
+  whitelistData,
+  nftCollectionData,
+  icoData,
+} from "../store/contract-data";
 import { ethers } from "ethers";
 
 export const useNativeBalance = () => {
@@ -22,6 +26,149 @@ export const useNativeBalance = () => {
   });
 
   return { balance };
+};
+
+export const useIcoContract = () => {
+  const zero = BigNumber.from("0");
+
+  const { signer, web3Provider, address, isConnected } = useWeb3();
+
+  const [tokensToBeClaimed, setTokensToBeClaimed] = useState(zero);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
+
+  const getContract = (withSigner) => {
+    let _contract;
+    if (withSigner) {
+      _contract = new Contract(
+        nftCollectionData.address,
+        nftCollectionData.abi,
+        signer
+      );
+      return _contract;
+    }
+    _contract = new Contract(
+      nftCollectionData.address,
+      nftCollectionData.abi,
+      web3Provider
+    );
+    return _contract;
+  };
+
+  /** Functions for Contract Interaction */
+
+  const mintTokens = async () => {
+    try {
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const claimTokens = async () => {
+    try {
+      const _contract = getContract(true);
+
+      const tx = await _contract.claim();
+
+      setIsLoading(true);
+      await tx.wait();
+      setIsLoading(false);
+    } catch (e) {
+      console.error(e);
+      setIsLoading(false);
+    }
+  };
+
+  const withdrawCoins = async () => {
+    try {
+      const _contract = getContract(true);
+
+      const tx = await _contract.withdraw();
+      setIsLoading(true);
+      await tx.wait();
+
+      setIsLoading(false);
+    } catch (e) {
+      console.error(e);
+      setIsLoading(false);
+    }
+  };
+
+  /** Contract View Functions */
+  const getBalanceOfTokens = async () => {
+    try {
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const getTotalTokensMinted = async () => {};
+
+  const getTokensToBeClaimed = async () => {
+    try {
+      const _contract = getContract();
+
+      const _nftContract = new Contract(
+        nftCollectionData.address,
+        nftCollectionData.abi,
+        web3Provider
+      );
+
+      const _balance = await _nftContract.balanceOf(address);
+
+      if (_balance === zero) {
+        setTokensToBeClaimed(zero);
+      } else {
+        let amount;
+
+        for (let index = 0; index < _balance.toNumber(); index++) {
+          const tokenId = _nftContract.tokenOfOwnerByIndex(address, i);
+          const claimed = _contract.s_tokenIdsClaimed(tokenId);
+          if (!claimed) {
+            amount++;
+          }
+        }
+        setTokensToBeClaimed(BigNumber.from(amount));
+      }
+    } catch (e) {
+      console.error(e);
+      setTokensToBeClaimed(zero);
+    }
+  };
+
+  const getOwner = async () => {
+    try {
+      const _contract = getContract();
+
+      const _owner = await _contract.owner();
+
+      if (_owner.toLowerCase() === address.toLowerCase()) {
+        setIsOwner(true);
+      } else {
+        setIsOwner(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    if (isConnected) {
+      getTokensToBeClaimed();
+      getBalanceOfTokens();
+      getTotalTokensMinted();
+      getOwner();
+    }
+  }, [web3Provider, address, isConnected]);
+
+  return {
+    claimTokens,
+    mintTokens,
+    tokensToBeClaimed,
+    withdrawCoins,
+    isLoading,
+    isOwner,
+  };
 };
 
 export const useNftCollection = () => {

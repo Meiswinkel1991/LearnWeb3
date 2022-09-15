@@ -17,6 +17,10 @@ const navLinks = [
     path: "/nft",
     name: "NFT Collection",
   },
+  {
+    path: "/initial-coin-offering",
+    name: "Initial Coin Offering",
+  },
 ];
 
 const MainNavigation = () => {
