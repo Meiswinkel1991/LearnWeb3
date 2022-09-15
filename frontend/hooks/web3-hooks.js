@@ -105,7 +105,7 @@ export const useNftCollection = () => {
   const checkIfPresaleStarted = async () => {
     try {
       const _contract = getContract();
-      const _presaleStarted = _contract.presaleStarted();
+      const _presaleStarted = await _contract.s_presaleStarted();
 
       setPresaleStarted(_presaleStarted);
       return _presaleStarted;
@@ -118,7 +118,7 @@ export const useNftCollection = () => {
     try {
       const _contract = getContract();
 
-      const _presaleEnded = await _contract.presaleEnded();
+      const _presaleEnded = await _contract.s_presaleEnded();
 
       const hasEnded = _presaleEnded.lt(Math.floor(Date.now() / 1000));
       if (hasEnded) {
@@ -126,6 +126,7 @@ export const useNftCollection = () => {
       } else {
         setPresaleEnded(false);
       }
+      return hasEnded;
     } catch (e) {
       console.error(e);
     }
@@ -135,7 +136,7 @@ export const useNftCollection = () => {
     try {
       const _contract = getContract();
 
-      const _tokenIds = await _contract.tokenIds();
+      const _tokenIds = await _contract.s_tokenIds();
       setTokenIdsMinted(_tokenIds.toString());
     } catch (e) {
       console.error(e);
@@ -167,12 +168,24 @@ export const useNftCollection = () => {
       }
 
       getTokenIdsMinted();
-      //TODO: Set two intervals to fetch data from blockchain!!!!
+
       // Set an interval which gets called every 5 seconds to check presale has ended
+      const presaleEndedInterval = setInterval(async () => {
+        const _presaleStarted = await checkIfPresaleStarted();
+        if (_presaleStarted) {
+          const _presaleEnded = await checkIfPresaleEnded();
+          if (_presaleEnded) {
+            clearInterval(presaleEndedInterval);
+          }
+        }
+      }, 5 * 1000);
 
       // set an interval to get the number of token Ids minted every 5 seconds
+      setInterval(async () => {
+        await getTokenIdsMinted();
+      }, 5 * 1000);
     }
-  });
+  }, [address, isConnected]);
 
   return {
     presaleStarted,

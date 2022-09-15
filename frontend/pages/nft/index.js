@@ -14,24 +14,62 @@ const NFT = () => {
     isLoading,
     isOwner,
     tokenIdsMinted,
+    startPresale,
   } = useNftCollection();
 
   const { isConnected } = useWeb3();
 
   const renderButton = () => {
     if (!isConnected) {
-      <ConnectionButton />;
+      return <ConnectionButton />;
     }
     if (isOwner && !presaleStarted) {
-      <Button>Start Presale!</Button>;
+      return <Button onClick={startPresale}>Start Presale!</Button>;
     }
+
+    if (!presaleEnded && presaleStarted) {
+      return <Button onClick={presaleMint}>Mint NFT</Button>;
+    }
+
+    if (presaleEnded && presaleStarted) {
+      return <Button onClick={publicMint}>Mint NFT</Button>;
+    }
+
+    return null;
+  };
+
+  const renderText = () => {
+    if (presaleStarted && !presaleEnded) {
+      return (
+        <p className="text-white">
+          The Presale is ongoing. Mint your NFT if you&apos;re whitelisted
+        </p>
+      );
+    }
+
+    if (presaleEnded && presaleStarted) {
+      return (
+        <p className="text-white">Claime one of the 20 most popular NFTs!!</p>
+      );
+    }
+
+    return null;
   };
 
   return (
     <div className="h-full  flex justify-center items-center overflow-auto">
-      <div>
+      <div className="space-y-4 ">
         <h1 className="text-4xl font-bold text-white">NFT Collection</h1>
-        <p className="text-white">Coming soon...</p>
+        {renderText()}
+        {renderButton()}
+        <div className="border-2 border-primary " />
+        <div className="grid grid-cols-2 gap-2 items-center">
+          <p className="text-white">Total Amount of minted MSW tokens: </p>
+          <p className="text-primary font-bold text-xl">
+            {tokenIdsMinted}
+            <span className="text-white ml-2">/ 20</span>
+          </p>
+        </div>
       </div>
     </div>
   );

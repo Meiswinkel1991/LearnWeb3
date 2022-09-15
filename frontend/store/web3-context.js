@@ -92,7 +92,7 @@ export function Web3ContextProvider(props) {
         disableInjectedProvider: false,
       });
     }
-    console.log(web3ModalRef.current.cacheProvider);
+    console.log("web3Modal: ", web3ModalRef.current.cacheProvider);
     if (!isConnected && web3ModalRef.current.cacheProvider) {
       console.log("reconnect!!!");
       connect();

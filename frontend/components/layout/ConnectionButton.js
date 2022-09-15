@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { useWeb3 } from "../../store/web3-context";
 import { useNativeBalance } from "../../hooks/web3-hooks";
-import { FaWallet } from "react-icons/fa";
+import { FaWallet, FaShoppingBag } from "react-icons/fa";
 
 const ConnectionButton = () => {
   const { connect, address, isConnected, disconnect } = useWeb3();
@@ -41,6 +41,13 @@ const ConnectionButton = () => {
             </div>
             <h2 className="text-primary  ">{parseFloat(balance).toFixed(4)}</h2>
           </div>
+
+          {/* <div className=" inline-block items-center text-center ">
+            <div className="self-center ">
+              <FaShoppingBag size={15} className="text-primary" />
+            </div>
+            <h2 className="text-primary  ">{parseFloat(balance).toFixed(4)}</h2>
+          </div> */}
         </div>
       )}
     </div>
