@@ -34,33 +34,41 @@ export const useIcoContract = () => {
   const { signer, web3Provider, address, isConnected } = useWeb3();
 
   const [tokensToBeClaimed, setTokensToBeClaimed] = useState(zero);
+  const [tokenBalance, setTokenBalance] = useState(zero);
+  const [tokensMinted, setTokensMinted] = useState(zero);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
 
   const getContract = (withSigner) => {
     let _contract;
     if (withSigner) {
-      _contract = new Contract(
-        nftCollectionData.address,
-        nftCollectionData.abi,
-        signer
-      );
+      _contract = new Contract(icoData.address, icoData.abi, signer);
       return _contract;
     }
-    _contract = new Contract(
-      nftCollectionData.address,
-      nftCollectionData.abi,
-      web3Provider
-    );
+    _contract = new Contract(icoData.address, icoData.abi, web3Provider);
     return _contract;
   };
 
   /** Functions for Contract Interaction */
 
-  const mintTokens = async () => {
+  const onMintTokens = async (amount) => {
     try {
+      const _contract = getContract(true);
+
+      const _value = amount * 0.001;
+      console.log("mint tokens...");
+      const tx = await _contract.mint(utils.parseEther(amount), {
+        value: utils.parseEther(_value.toString()),
+      });
+
+      setIsLoading(true);
+      await tx.wait();
+
+      setIsLoading(false);
     } catch (e) {
       console.error(e);
+      setIsLoading(false);
     }
   };
 
@@ -97,12 +105,29 @@ export const useIcoContract = () => {
   /** Contract View Functions */
   const getBalanceOfTokens = async () => {
     try {
+      const _contract = getContract();
+
+      const _balance = await _contract.balanceOf(address);
+
+      setTokenBalance(_balance);
     } catch (e) {
       console.error(e);
+      setTokenBalance(zero);
     }
   };
 
-  const getTotalTokensMinted = async () => {};
+  const getTotalTokensMinted = async () => {
+    try {
+      const _contract = getContract();
+
+      const _tokensMinted = await _contract.totalSupply();
+
+      setTokensMinted(_tokensMinted);
+    } catch (e) {
+      console.error(e);
+      setTokensMinted(zero);
+    }
+  };
 
   const getTokensToBeClaimed = async () => {
     try {
@@ -119,15 +144,19 @@ export const useIcoContract = () => {
       if (_balance === zero) {
         setTokensToBeClaimed(zero);
       } else {
-        let amount;
+        let amount = 0;
 
         for (let index = 0; index < _balance.toNumber(); index++) {
-          const tokenId = _nftContract.tokenOfOwnerByIndex(address, i);
-          const claimed = _contract.s_tokenIdsClaimed(tokenId);
+          const tokenId = await _nftContract.tokenOfOwnerByIndex(
+            address,
+            index
+          );
+          const claimed = await _contract.s_tokenIdsClaimed(tokenId);
           if (!claimed) {
             amount++;
           }
         }
+
         setTokensToBeClaimed(BigNumber.from(amount));
       }
     } catch (e) {
@@ -159,15 +188,17 @@ export const useIcoContract = () => {
       getTotalTokensMinted();
       getOwner();
     }
-  }, [web3Provider, address, isConnected]);
+  }, [web3Provider, address, isConnected, isLoading]);
 
   return {
     claimTokens,
-    mintTokens,
+    onMintTokens,
     tokensToBeClaimed,
     withdrawCoins,
     isLoading,
     isOwner,
+    tokenBalance,
+    tokensMinted,
   };
 };
 
@@ -177,6 +208,7 @@ export const useNftCollection = () => {
   const [presaleStarted, setPresaleStarted] = useState(false);
   const [presaleEnded, setPresaleEnded] = useState(false);
   const [tokenIdsMinted, setTokenIdsMinted] = useState("0");
+  const [nftBalance, setNftBalance] = useState(0);
 
   const [isOwner, setIsOwner] = useState(false);
 
@@ -290,6 +322,19 @@ export const useNftCollection = () => {
     }
   };
 
+  const getNftBalance = async () => {
+    try {
+      const _contract = getContract();
+
+      const _balance = await _contract.balanceOf(address);
+
+      setNftBalance(_balance.toNumber());
+    } catch (e) {
+      console.error(e);
+      setNftBalance(0);
+    }
+  };
+
   const getOwner = async () => {
     try {
       const _contract = getContract();
@@ -315,6 +360,7 @@ export const useNftCollection = () => {
       }
 
       getTokenIdsMinted();
+      getNftBalance();
 
       // Set an interval which gets called every 5 seconds to check presale has ended
       const presaleEndedInterval = setInterval(async () => {
@@ -343,6 +389,7 @@ export const useNftCollection = () => {
     publicMint,
     presaleMint,
     startPresale,
+    nftBalance,
   };
 };
 

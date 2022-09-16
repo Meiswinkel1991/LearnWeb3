@@ -27,7 +27,7 @@ const MainNavigation = () => {
   return (
     <nav className="flex items-center justify-between mx-4 pt-2">
       <div className="text-white text-4xl font-semibold font-sans tracking-tighter">
-        Learn Web <span className="text-primary">3</span>
+        MSW <span className="text-primary">.dev</span>
       </div>
       <ul className="flex space-x-4 text-white ">
         {navLinks.map((navLink, index) => {

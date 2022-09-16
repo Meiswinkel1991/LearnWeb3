@@ -1,12 +1,18 @@
 import React from "react";
-import Image from "next/image";
+import { utils } from "ethers";
 import { useWeb3 } from "../../store/web3-context";
-import { useNativeBalance } from "../../hooks/web3-hooks";
-import { FaWallet, FaShoppingBag } from "react-icons/fa";
+import {
+  useNativeBalance,
+  useIcoContract,
+  useNftCollection,
+} from "../../hooks/web3-hooks";
+import { FaWallet } from "react-icons/fa";
 
 const ConnectionButton = () => {
   const { connect, address, isConnected, disconnect } = useWeb3();
+  const { tokenBalance } = useIcoContract();
   const { balance } = useNativeBalance();
+  const { nftBalance } = useNftCollection();
 
   return (
     <div>
@@ -31,23 +37,19 @@ const ConnectionButton = () => {
           </button>
           <FaWallet size={32} className="text-primary h-12" />
           <div className=" inline-block items-center text-center ">
-            <div className="self-center ">
-              <Image
-                src="/crypto-symbols/matic.svg"
-                alt="matic symbol"
-                width={15}
-                height={15}
-              />
-            </div>
+            <h2 className="text-white font-semibold">MATIC</h2>
             <h2 className="text-primary  ">{parseFloat(balance).toFixed(4)}</h2>
           </div>
-
-          {/* <div className=" inline-block items-center text-center ">
-            <div className="self-center ">
-              <FaShoppingBag size={15} className="text-primary" />
-            </div>
-            <h2 className="text-primary  ">{parseFloat(balance).toFixed(4)}</h2>
-          </div> */}
+          <div className=" inline-block items-center text-center ">
+            <h2 className="text-white font-semibold">NFT </h2>
+            <h2 className="text-primary  ">{nftBalance}</h2>
+          </div>
+          <div className=" inline-block items-center text-center ">
+            <h2 className="text-white font-semibold">CT</h2>
+            <h2 className="text-primary  ">
+              {parseFloat(utils.formatEther(tokenBalance)).toFixed(4)}
+            </h2>
+          </div>
         </div>
       )}
     </div>

@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import Button from "../../components/ui/Button";
+import Card from "../ui/Card";
 
 const MintTokenForm = (props) => {
   const tokenAmountInputRef = useRef();
@@ -13,8 +14,8 @@ const MintTokenForm = (props) => {
   };
 
   return (
-    <div className="bg-neutral rounded-xl mx-auto w-full shadow-xl py-4 px-4">
-      <form className="space-y-4 mx-4">
+    <Card>
+      <form className="space-y-4 mx-4" onSubmit={handleSubmit}>
         <h1 className="text-2xl font-bold text-white">
           Mint your Crypto Turtle Tokens
         </h1>
@@ -32,7 +33,7 @@ const MintTokenForm = (props) => {
         </div>
         <Button>Mint Tokens</Button>
       </form>
-    </div>
+    </Card>
   );
 };
 
